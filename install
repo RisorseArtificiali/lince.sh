@@ -88,6 +88,49 @@ else
   MISSING+=("git")
 fi
 
+# Zellij
+if check_cmd zellij; then
+  echo -e "  ${GREEN}✓${NC} zellij $(zellij --version 2>/dev/null | awk '{print $2}')"
+else
+  MISSING+=("zellij (>= 0.40)")
+  echo -e "  ${YELLOW}✗${NC} zellij not found"
+  echo ""
+  echo "    Install Zellij:"
+  if [ "$OS_NAME" = "Darwin" ]; then
+    echo "      brew install zellij"
+  else
+    echo "      # Fedora/RHEL:"
+    echo "      sudo dnf install zellij"
+    echo "      # Ubuntu/Debian:"
+    echo "      sudo apt install zellij"
+    echo "      # Or via cargo:"
+    echo "      cargo install --locked zellij"
+    echo "      # Or prebuilt binary:"
+    echo "      curl -L https://github.com/zellij-org/zellij/releases/latest/download/zellij-x86_64-unknown-linux-musl.tar.gz | tar xz && sudo mv zellij /usr/local/bin/"
+  fi
+  echo ""
+fi
+
+# Sandbox backend
+if [ "$OS_NAME" = "Linux" ]; then
+  if check_cmd bwrap; then
+    echo -e "  ${GREEN}✓${NC} bubblewrap"
+  else
+    MISSING+=("bubblewrap")
+    echo -e "  ${YELLOW}✗${NC} bubblewrap not found"
+    echo "    Install: sudo dnf install bubblewrap  (or: sudo apt install bubblewrap)"
+  fi
+elif [ "$OS_NAME" = "Darwin" ]; then
+  if check_cmd nono; then
+    echo -e "  ${GREEN}✓${NC} nono"
+  else
+    MISSING+=("nono")
+    echo -e "  ${YELLOW}✗${NC} nono not found"
+    echo "    Install: brew install nono"
+    echo "    See: https://github.com/nicholasgasior/nono"
+  fi
+fi
+
 # C linker (required by Rust/cargo to compile native code)
 if check_cmd cc; then
   echo -e "  ${GREEN}✓${NC} cc (C linker)"
@@ -103,6 +146,15 @@ else
     echo "      # Ubuntu/Debian:"
     echo "      sudo apt install build-essential"
   fi
+fi
+
+# Rust (for dashboard WASM build)
+if check_cmd rustc; then
+  echo -e "  ${GREEN}✓${NC} rustc $(rustc --version 2>/dev/null | awk '{print $2}')"
+else
+  MISSING+=("Rust toolchain (for building dashboard plugin)")
+  echo -e "  ${YELLOW}✗${NC} rustc not found"
+  echo "    Install: curl --proto '=https' --tlsv1.2 -sSf https://sh.rustup.rs | sh"
 fi
 
 echo ""
@@ -144,13 +196,16 @@ if [ ! -f "$QUICKSTART" ]; then
   exit 1
 fi
 
-# When piped through curl | bash, stdin is the script itself, not the
-# terminal. Reattach stdin to /dev/tty so quickstart.sh can prompt.
-# Use a subshell test to avoid set -e killing us if /dev/tty is unavailable.
-if [ -e /dev/tty ]; then
-  exec < /dev/tty
-fi
-
 echo -e "${CYAN}Handing off to quickstart.sh...${NC}"
 echo ""
-exec bash "$QUICKSTART" "$@"
+
+# When piped through curl | bash, stdin is the script itself, not the
+# terminal. We need to give quickstart.sh access to the real terminal
+# for interactive prompts.
+if [ -t 0 ]; then
+  # Already running in a terminal — just exec
+  exec bash "$QUICKSTART" "$@"
+else
+  # Piped (curl | bash) — run quickstart with stdin from /dev/tty
+  bash "$QUICKSTART" "$@" < /dev/tty
+fi
