@@ -99,14 +99,9 @@ else
   if [ "$OS_NAME" = "Darwin" ]; then
     echo "      brew install zellij"
   else
-    echo "      # Fedora/RHEL:"
-    echo "      sudo dnf install zellij"
-    echo "      # Ubuntu/Debian:"
-    echo "      sudo apt install zellij"
+    echo "      curl -L https://github.com/zellij-org/zellij/releases/latest/download/zellij-x86_64-unknown-linux-musl.tar.gz | tar xz && sudo mv zellij /usr/local/bin/"
     echo "      # Or via cargo:"
     echo "      cargo install --locked zellij"
-    echo "      # Or prebuilt binary:"
-    echo "      curl -L https://github.com/zellij-org/zellij/releases/latest/download/zellij-x86_64-unknown-linux-musl.tar.gz | tar xz && sudo mv zellij /usr/local/bin/"
   fi
   echo ""
 fi
