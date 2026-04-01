@@ -55,6 +55,7 @@
       </a>
       <div class="flex gap-6 text-sm text-muted">
         <a href="#features" class="hover:text-white transition-colors">Features</a>
+        <a href="#sandbox" class="hover:text-white transition-colors">Sandbox</a>
         <a href="#install" class="hover:text-white transition-colors">Install</a>
         <a href="#repos" class="hover:text-white transition-colors">Repos</a>
         <a href="https://github.com/RisorseArtificiali/lince" class="hover:text-white transition-colors">GitHub</a>
@@ -97,7 +98,7 @@
         <div class="feature-card rounded-lg p-6">
           <div class="text-2xl mb-3">&#x1f6e1;</div>
           <h3 class="font-semibold mb-2">Agents need sandboxing</h3>
-          <p class="text-sm text-muted leading-relaxed">AI coding agents get full terminal access. Without isolation, one bad command can reach your SSH keys, cloud credentials, or git push to production. LINCE sandboxes every agent with bubblewrap &mdash; same tech as Flatpak.</p>
+          <p class="text-sm text-muted leading-relaxed">AI coding agents get full terminal access. Without isolation, one bad command can reach your SSH keys, cloud credentials, or git push to production. LINCE lets you sandbox each agent with multiple backends &mdash; and choose per-agent at runtime.</p>
         </div>
         <div class="feature-card rounded-lg p-6">
           <div class="text-2xl mb-3">&#x1f3af;</div>
@@ -145,7 +146,7 @@
         </div>
         <div class="feature-card rounded-lg p-4">
           <h4 class="font-semibold mb-1">Sandbox isolation</h4>
-          <p class="text-muted">Every agent runs inside agent-sandbox. Full autonomy, zero host risk.</p>
+          <p class="text-muted">Choose a sandbox backend per agent at launch &mdash; or run unsandboxed when you need full host access.</p>
         </div>
         <div class="feature-card rounded-lg p-4">
           <h4 class="font-semibold mb-1">Swimlane grouping</h4>
@@ -201,7 +202,7 @@
             <span class="text-amber font-bold">&#x26A0;</span>
             <h4 class="font-semibold">macOS</h4>
           </div>
-          <p class="text-muted">Experimental. Sandbox via <a href="https://github.com/always-further/nono" class="text-accent hover:underline">nono</a> (Seatbelt). <a href="https://github.com/RisorseArtificiali/lince/issues/19" class="text-accent hover:underline">Looking for testers.</a></p>
+          <p class="text-muted">Experimental. Sandbox via <a href="https://nono.sh" class="text-accent hover:underline">nono</a> (Seatbelt). <a href="https://github.com/RisorseArtificiali/lince/issues/19" class="text-accent hover:underline">Looking for testers.</a></p>
         </div>
         <div class="feature-card rounded-lg p-4">
           <div class="flex items-center gap-2 mb-2">
@@ -225,11 +226,49 @@ You speak    <span class="text-muted">───></span>  <span class="text-cyan"
                               <span class="text-accent">Dashboard</span>  <span class="text-muted"><───</span>  routes to focused agent
                                      │
                             <span class="text-amber">agent-sandbox</span>  <span class="text-muted"><───</span>  isolates execution
+                              <span class="text-muted">├── bwrap</span>  ┐
+                              <span class="text-muted">├── nono</span>   ├── <span class="text-muted">choose per agent</span>
+                              <span class="text-muted">└── none</span>   ┘
                               ┌──────┼──────┐
                          <span class="text-white">Claude</span>   <span class="text-white">Codex</span>   <span class="text-white">Gemini</span>   <span class="text-muted">...any agent</span>
                               │      │      │
-                           project/ project/ project/  <span class="text-muted">(sandboxed)</span>
+                           project/ project/ project/
 </pre>
+      </div>
+    </div>
+  </section>
+
+  <!-- Sandbox Backends -->
+  <section id="sandbox" class="border-t border-border">
+    <div class="max-w-5xl mx-auto px-6 py-20">
+      <h2 class="text-2xl font-bold mb-4">Sandbox Backends</h2>
+      <p class="text-muted mb-8 max-w-2xl">The installer configures which backends are available. Each time you launch an agent, you choose which one to use.</p>
+
+      <div class="grid sm:grid-cols-3 gap-6">
+        <div class="feature-card rounded-lg p-6">
+          <div class="flex items-center gap-2 mb-3">
+            <span class="text-accent font-bold">&#10003;</span>
+            <h3 class="font-semibold">bubblewrap</h3>
+          </div>
+          <p class="text-xs font-mono text-muted mb-3">Linux only</p>
+          <p class="text-sm text-muted leading-relaxed">Same technology as Flatpak. LINCE's built-in sandbox &mdash; minimal by design, zero external dependencies. Battle-tested, zero overhead.</p>
+        </div>
+        <div class="feature-card rounded-lg p-6">
+          <div class="flex items-center gap-2 mb-3">
+            <span class="text-accent font-bold">&#10003;</span>
+            <h3 class="font-semibold">nono</h3>
+          </div>
+          <p class="text-xs font-mono text-muted mb-3">Linux &amp; macOS</p>
+          <p class="text-sm text-muted leading-relaxed">Newer alternative. Integration with <a href="https://nono.sh" class="text-accent hover:underline">nono.sh</a>, an external project focused on security including network isolation. Uses Landlock on Linux, Seatbelt on macOS. Brings some additional dependencies.</p>
+        </div>
+        <div class="feature-card rounded-lg p-6">
+          <div class="flex items-center gap-2 mb-3">
+            <span class="text-muted font-bold">&#x26A0;</span>
+            <h3 class="font-semibold">Unsandboxed</h3>
+          </div>
+          <p class="text-xs font-mono text-muted mb-3">Any platform</p>
+          <p class="text-sm text-muted leading-relaxed">No isolation. The agent runs directly on your system with full host access. Use for trusted tasks where you need unrestricted access to the host environment.</p>
+        </div>
       </div>
     </div>
   </section>

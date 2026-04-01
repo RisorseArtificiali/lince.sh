@@ -99,7 +99,7 @@ else
   if [ "$OS_NAME" = "Darwin" ]; then
     echo "      brew install zellij"
   else
-    echo "      curl -L https://github.com/zellij-org/zellij/releases/latest/download/zellij-x86_64-unknown-linux-musl.tar.gz | tar xz && sudo mv zellij /usr/local/bin/"
+    echo "      mkdir -p ~/.local/bin && curl -L https://github.com/zellij-org/zellij/releases/latest/download/zellij-x86_64-unknown-linux-musl.tar.gz | tar xz && mv zellij ~/.local/bin/"
     echo "      # Or via cargo:"
     echo "      cargo install --locked zellij"
   fi
@@ -143,12 +143,12 @@ else
   fi
 fi
 
-# Rust (for dashboard WASM build)
-if check_cmd rustc; then
-  echo -e "  ${GREEN}✓${NC} rustc $(rustc --version 2>/dev/null | awk '{print $2}')"
+# Rustup (for dashboard WASM build — distro rustc alone cannot provide wasm32 targets)
+if check_cmd rustup; then
+  echo -e "  ${GREEN}✓${NC} rustup $(rustup --version 2>/dev/null | awk '{print $2}')"
 else
-  MISSING+=("Rust toolchain (for building dashboard plugin)")
-  echo -e "  ${YELLOW}✗${NC} rustc not found"
+  MISSING+=("rustup (for building dashboard WASM plugin)")
+  echo -e "  ${YELLOW}✗${NC} rustup not found"
   echo "    Install: curl --proto '=https' --tlsv1.2 -sSf https://sh.rustup.rs | sh"
 fi
 
